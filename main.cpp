@@ -17,6 +17,48 @@ void applygrayfilter(Image& image) {
         }
     }
 }
+void invertImage(Image& img) {
+    for (int i = 0; i < img.height; i++) {
+        for (int j = 0; j < img.width; j++) {
+            for (int k = 0; k < 3; k++) {
+                img(i, j, k) = 255 - img(i, j, k);
+            }
+        }
+    }
+}
+Image rotate90(const Image& img) {
+    Image rotated(img.height, img.width);
+    for (int i = 0; i < img.width; i++) {
+        for (int j = 0; j < img.height; j++) {
+            for (int k = 0; k < 3; k++) {
+                rotated(img.height - 1 - j, i, k) = img(i, j, k);
+            }
+        }
+    }
+    return rotated;
+}
+Image rotate180(const Image& img) {
+    Image rotated(img.width, img.height);
+    for (int i = 0; i < img.width; i++) {
+        for (int j = 0; j < img.height; j++) {
+            for (int k = 0; k < 3; k++) {
+                rotated(img.width - 1 - i, img.height - 1 - j, k) = img(i, j, k);
+            }
+        }
+    }
+    return rotated;
+}
+Image rotate270(const Image& img) {
+    Image rotated(img.height, img.width);
+    for (int i = 0; i < img.width; i++) {
+        for (int j = 0; j < img.height; j++) {
+            for (int k = 0; k < 3; k++) {
+                rotated(j, img.width - 1 - i, k) = img(i, j, k);
+            }
+        }
+    }
+    return rotated;
+}
 void applyLighten(Image& img) {
     for (int i = 0; i < img.width; i++) {
         for (int j = 0; j < img.height; j++) {
@@ -72,10 +114,12 @@ int main() {
         cout << "     MENU     \n";
         cout << "{1} Load new image\n";
         cout << "{2} Grayscale\n";
-        cout << "{3} Lighten Image\n";
-        cout << "{4} Darken Image\n";
-        cout << "{5} Save Image\n";
-        cout << "{6} Exit\n";
+        cout << "{3} Invert Image\n";
+        cout << "{4} Rotate (90, 180, 270)\n";
+        cout << "{5} Lighten Image\n";
+        cout << "{6} Darken Image\n";
+        cout << "{7} Save Image\n";
+        cout << "{8} Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
         if (choice == "1") {
@@ -85,15 +129,29 @@ int main() {
             applygrayfilter(image);
             edited = true;
         } else if (choice == "3") {
-            applyLighten(image);
+            invertImage(image);
             edited = true;
         } else if (choice == "4") {
-            applyDarken(image);
+            string rotate;
+            cout << "Rotate: {1} 90° {2} 180° {3} 270°\n";
+            cin >> rotate;
+            if (rotate == "1") image = rotate90(image);
+            else if (rotate == "2") image = rotate180(image);
+            else if (rotate == "3") image = rotate270(image);
+            else cout << "Invalid!\n";
             edited = true;
         } else if (choice == "5") {
+            applyLighten(image);
+            edited = true;
+        } else if (choice == "6") {
+            applyDarken(image);
+            edited = true;
+        }
+        else if (choice == "7") {
             save();
             edited = false;
-        } else if (choice == "6") {
+        }
+        else if (choice == "8") {
             if (edited) {
                 cout << "Do you want to save before exiting? (y/n): ";
                 char c; cin >> c;
@@ -104,6 +162,7 @@ int main() {
         } else {
             cout << "Invalid choice! Try again.\n";
         }
+
     }
     return 0;
 }
