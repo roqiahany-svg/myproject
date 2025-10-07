@@ -3,6 +3,42 @@
 using namespace std;
 Image image;
 string filename;
+void Black_White(Image& img) {
+    for (int i = 0; i < img.width; ++i) {
+        for (int j = 0; j < img.height; ++j) {
+            int avg = 0;
+            for (int k = 0; k < 3; ++k) {
+                avg += img(i, j, k);
+            }
+            avg /= 3;
+            for (int k = 0; k < 3; ++k) {
+                img(i, j, k) = avg;
+            }
+        }
+    }
+}
+void Flip_vertically(Image& image) {
+    Image temp = image;
+    for (int i = 0; i < image.width; i++) {
+        for (int j = 0; j < image.height; j++) {
+            for (int k = 0; k < image.channels; k++) {
+                image(i, j, k)= temp(i, image.height-1-j, k);
+
+            }
+        }
+    }
+}
+void Flip_Horizontally(Image& image) {
+    Image temp = image;
+    for (int i = 0; i < image.width; i++) {
+        for (int j = 0; j < image.height; j++) {
+            for (int k = 0; k < image.channels; k++) {
+                image(i, j, k)= temp(image.width-1-i, j, k);
+
+            }
+        }
+    }
+}
 void applygrayfilter(Image& image) {
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
@@ -118,8 +154,11 @@ int main() {
         cout << "{4} Rotate (90, 180, 270)\n";
         cout << "{5} Lighten Image\n";
         cout << "{6} Darken Image\n";
-        cout << "{7} Save Image\n";
-        cout << "{8} Exit\n";
+        cout << "{7} Black_White Image\n";
+        cout << "{8} flip Image verticaly\n";
+        cout << "{9} flip Image horizontally\n";
+        cout << "{10} Save Image\n";
+        cout << "{11} Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
         if (choice == "1") {
@@ -148,10 +187,22 @@ int main() {
             edited = true;
         }
         else if (choice == "7") {
+            Black_White(image);
+            edited = true;
+        }
+        else if (choice == "8") {
+            Flip_vertically(image);
+            edited = true;
+        }
+        else if (choice == "9") {
+            Flip_Horizontally(image);
+            edited = true;
+        }
+        else if (choice == "10") {
             save();
             edited = false;
         }
-        else if (choice == "8") {
+        else if (choice == "11") {
             if (edited) {
                 cout << "Do you want to save before exiting? (y/n): ";
                 char c; cin >> c;
