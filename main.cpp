@@ -113,6 +113,27 @@ void applyDarken(Image& img) {
         }
     }
 }
+void cropfunction(Image& image) {
+    int x, y, width, height;
+    cout << "Enter the starting point (x , y ) of the area to crop:  ";
+    cin >> x >> y;
+    cout << "Enter the new width and height (W H): ";
+    cin >> width >> height;
+    if (x < 0 || y < 0 || width <= 0 || height <= 0 ||
+        x + width > image.width || y + height > image.height) {
+        cout << "Cropping dimensions are out of bounds.\n";
+        return;
+        }
+    Image croppedImage(width, height);
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            for (int k = 0; k < image.channels; ++k) {
+                croppedImage.setPixel(i, j, k, image.getPixel(x + i, y + j, k));
+            }
+        }
+    }
+    image = croppedImage;
+}
 void load(Image& img) {
     while (true) {
         try {
@@ -157,8 +178,9 @@ int main() {
         cout << "{7} Black_White Image\n";
         cout << "{8} flip Image verticaly\n";
         cout << "{9} flip Image horizontally\n";
-        cout << "{10} Save Image\n";
-        cout << "{11} Exit\n";
+        cout << "{10} crop the Image\n";
+        cout << "{11} Save Image\n";
+        cout << "{12} Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
         if (choice == "1") {
@@ -199,10 +221,14 @@ int main() {
             edited = true;
         }
         else if (choice == "10") {
+           cropfunction(image);
+            edited = true;
+        }
+        else if (choice == "11") {
             save();
             edited = false;
         }
-        else if (choice == "11") {
+        else if (choice == "12") {
             if (edited) {
                 cout << "Do you want to save before exiting? (y/n): ";
                 char c; cin >> c;
