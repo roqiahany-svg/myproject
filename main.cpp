@@ -134,6 +134,24 @@ void cropfunction(Image& image) {
     }
     image = croppedImage;
 }
+void resize(Image& image) {
+    int newWidth, newHeight;
+    cout << "Enter the new width: ";
+    cin >> newWidth;
+    cout << "Enter the new height: ";
+    cin >> newHeight;
+    Image resizedImage(newWidth, newHeight);
+    for (int i = 0; i < newWidth; i++) {
+        for (int j = 0; j < newHeight; j++) {
+            int originalX = i * image.width / newWidth;
+            int originalY = j * image.height / newHeight;
+            for (int k = 0; k < 3; k++) {
+                resizedImage.setPixel(i, j, k, image.getPixel(originalX, originalY, k));
+            }
+        }
+    }
+    image = resizedImage;
+}
 void load(Image& img) {
     while (true) {
         try {
@@ -162,24 +180,7 @@ void save() {
         cout << "Invalid choice!\n";
     }
 }
-void resize(Image& image) {
-    int newWidth, newHeight;
-    cout << "Enter the new width: ";
-    cin >> newWidth;
-    cout << "Enter the new height: ";
-    cin >> newHeight;
-    Image resizedImage(newWidth, newHeight);
-    for (int i = 0; i < newWidth; i++) {
-        for (int j = 0; j < newHeight; j++) {
-            int originalX = i * image.width / newWidth;
-            int originalY = j * image.height / newHeight;
-            for (int k = 0; k < 3; k++) {
-                resizedImage.setPixel(i, j, k, image.getPixel(originalX, originalY, k));
-            }
-        }
-    }
-    image = resizedImage;
-}
+
 int main() {
     cout << "Please load the image first.\n";
     load(image);
