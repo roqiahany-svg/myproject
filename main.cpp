@@ -152,6 +152,45 @@ void resize(Image& image) {
     }
     image = resizedImage;
 }
+Image mergeImages(Image img1,Image img2){
+    int finalWidth=max(img1.width,img2.width);
+    int finalHeight=max(img1.height,img2.height);
+    if (img1.width!=finalWidth||img1.height!=finalHeight){
+        Image resized(finalWidth,finalHeight);
+        for(int i=0;i<finalWidth;i++){
+            for (int j=0;j<finalHeight;j++){
+                int origX=i*img1.width/finalWidth;
+                int origY=j*img1.height/finalHeight;
+                for (int k=0;k<3;k++) {
+                    resized(i,j,k)=img1(origX,origY,k);
+                }
+            }
+        }
+        img1 = resized;
+    }
+    if (img2.width != finalWidth||img2.height!=finalHeight){
+        Image resized(finalWidth,finalHeight);
+        for(int i=0;i<finalWidth;i++){
+            for (int j=0;j<finalHeight;j++){
+                int origX=i*img2.width/finalWidth;
+                int origY=j*img2.height/finalHeight;
+                for(int k=0;k<3;k++){
+                    resized(i,j,k)=img2(origX,origY,k);
+                }
+            }
+        }
+        img2=resized;
+    }
+    Image merged(finalWidth,finalHeight);
+    for(int i=0;i<finalWidth;i++){
+        for (int j=0;j<finalHeight;j++){
+            for (int k=0;k<3;k++){
+                merged(i,j,k)=(img1(i, j, k) + img2(i, j, k)) / 2;
+            }
+        }
+    }
+    return merged;
+}
 void load(Image& img) {
     while (true) {
         try {
@@ -198,8 +237,9 @@ int main() {
         cout << "{9} flip Image horizontally\n";
         cout << "{10} crop the Image\n";
         cout << "{11} Resize the Image\n";
-        cout << "{12} Save Image\n";           
-        cout << "{13} Exit\n";
+        cout << "{12} Merge Images\n"
+        cout << "{13} Save Image\n";           
+        cout << "{14} Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -247,10 +287,18 @@ int main() {
         else if (choice == "11") {
             resize(image);
             edited = true;
-        } else if (choice == "12") {
+
+        } else if (choice == "12"){
+            string secondImageName;
+            cout<<"Enter the second image file name: ";
+            cin>>secondImageName;
+            Image img2(secondImageName);
+            image = mergeImages(image, img2);
+            cout << "Images merged successfully!\n";
+        }else if (choice == "13") {
             save();
             edited = false;
-        } else if (choice == "13") {
+        } else if (choice == "14") {
             if (edited) {
                 cout << "Do you want to save before exiting? (y/n): ";
                 char c; cin >> c;
