@@ -134,6 +134,46 @@ void cropfunction(Image& image) {
     }
     image = croppedImage;
 }
+void detect_image_edges(Image& img) {
+    Image temp = img;
+    for (int i = 0; i < temp.width; ++i) {
+        for (int j = 0; j < temp.height; ++j) {
+            int avg = 0;
+            for (int k = 0; k < 3; ++k) {
+                avg += temp(i, j, k);
+            }
+            avg /= 3;
+            int bw = (avg >= 128) ? 255 : 0;
+            for (int k = 0; k < 3; ++k) {
+                temp(i, j, k) = bw;
+            }
+        }
+    }
+    int w = temp.width,h = temp.height;
+    Image newimage(w, h);
+
+    for (int i = 1; i < w - 1; ++i) {
+        for (int j = 1; j < h - 1; ++j) {
+            if ((temp(i - 1, j, 0) == 255 ||
+                 temp(i + 1, j, 0) == 255 ||
+                 temp(i, j - 1, 0) == 255 ||
+                 temp(i, j + 1, 0) == 255)
+                && temp(i, j, 0) == 0) {
+
+                newimage(i, j, 0) = 0;
+                newimage(i, j, 1) = 0;
+                newimage(i, j, 2) = 0;
+                } else {
+                    newimage(i, j, 0) = 255;
+                    newimage(i, j, 1) = 255;
+                    newimage(i, j, 2) = 255;
+                }
+        }
+    }
+
+    img = newimage;
+}
+
 void load(Image& img) {
     while (true) {
         try {
@@ -179,8 +219,9 @@ int main() {
         cout << "{8} flip Image verticaly\n";
         cout << "{9} flip Image horizontally\n";
         cout << "{10} crop the Image\n";
-        cout << "{11} Save Image\n";
-        cout << "{12} Exit\n";
+        cout << "{11} detect_image_edges\n";
+        cout << "{12} Save Image\n";
+        cout << "{13} Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
         if (choice == "1") {
@@ -225,10 +266,14 @@ int main() {
             edited = true;
         }
         else if (choice == "11") {
+           detect_image_edges(image);
+            edited = true;
+        }
+        else if (choice == "12") {
             save();
             edited = false;
         }
-        else if (choice == "12") {
+        else if (choice == "13") {
             if (edited) {
                 cout << "Do you want to save before exiting? (y/n): ";
                 char c; cin >> c;
