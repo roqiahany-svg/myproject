@@ -191,6 +191,45 @@ Image mergeImages(Image img1,Image img2){
     }
     return merged;
 }
+void detect_image_edges(Image& img) {
+    Image temp = img;
+    for (int i = 0; i < temp.width; ++i) {
+        for (int j = 0; j < temp.height; ++j) {
+            int avg = 0;
+            for (int k = 0; k < 3; ++k) {
+                avg += temp(i, j, k);
+            }
+            avg /= 3;
+            int bw = (avg >= 128) ? 255 : 0;
+            for (int k = 0; k < 3; ++k) {
+                temp(i, j, k) = bw;
+            }
+        }
+    }
+    int w = temp.width,h = temp.height;
+    Image newimage(w, h);
+
+    for (int i = 1; i < w - 1; ++i) {
+        for (int j = 1; j < h - 1; ++j) {
+            if ((temp(i - 1, j, 0) == 255 ||
+                 temp(i + 1, j, 0) == 255 ||
+                 temp(i, j - 1, 0) == 255 ||
+                 temp(i, j + 1, 0) == 255)
+                && temp(i, j, 0) == 0) {
+
+                newimage(i, j, 0) = 0;
+                newimage(i, j, 1) = 0;
+                newimage(i, j, 2) = 0;
+                } else {
+                    newimage(i, j, 0) = 255;
+                    newimage(i, j, 1) = 255;
+                    newimage(i, j, 2) = 255;
+                }
+        }
+    }
+
+    img = newimage;
+}
 void load(Image& img) {
     while (true) {
         try {
@@ -238,8 +277,9 @@ int main() {
         cout << "{10} crop the Image\n";
         cout << "{11} Resize the Image\n";
         cout << "{12} Merge Images\n"
-        cout << "{13} Save Image\n";           
-        cout << "{14} Exit\n";
+        cout << "{13} Detect Image Edges\n";
+        cout << "{14} Save Image\n";           
+        cout << "{15} Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -295,10 +335,13 @@ int main() {
             Image img2(secondImageName);
             image = mergeImages(image, img2);
             cout << "Images merged successfully!\n";
-        }else if (choice == "13") {
+        } else if (choice == "13") {
+            detect_image_edges(image);
+            edited = true;
+        } else if (choice == "14") {
             save();
             edited = false;
-        } else if (choice == "14") {
+        } else if (choice == "15") {
             if (edited) {
                 cout << "Do you want to save before exiting? (y/n): ";
                 char c; cin >> c;
