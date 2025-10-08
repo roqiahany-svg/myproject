@@ -134,6 +134,24 @@ void cropfunction(Image& image) {
     }
     image = croppedImage;
 }
+void resize(Image& image) {
+    int newWidth, newHeight;
+    cout << "Enter the new width: ";
+    cin >> newWidth;
+    cout << "Enter the new height: ";
+    cin >> newHeight;
+    Image resizedImage(newWidth, newHeight);
+    for (int i = 0; i < newWidth; i++) {
+        for (int j = 0; j < newHeight; j++) {
+            int originalX = i * image.width / newWidth;
+            int originalY = j * image.height / newHeight;
+            for (int k = 0; k < 3; k++) {
+                resizedImage.setPixel(i, j, k, image.getPixel(originalX, originalY, k));
+            }
+        }
+    }
+    image = resizedImage;
+}
 void load(Image& img) {
     while (true) {
         try {
@@ -179,10 +197,12 @@ int main() {
         cout << "{8} flip Image verticaly\n";
         cout << "{9} flip Image horizontally\n";
         cout << "{10} crop the Image\n";
-        cout << "{11} Save Image\n";
-        cout << "{12} Exit\n";
+        cout << "{11} Resize the Image\n";
+        cout << "{12} Save Image\n";           
+        cout << "{13} Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
+
         if (choice == "1") {
             load(image);
             edited = false;
@@ -221,14 +241,16 @@ int main() {
             edited = true;
         }
         else if (choice == "10") {
-           cropfunction(image);
+            cropfunction(image);
             edited = true;
         }
         else if (choice == "11") {
+            resize(image);
+            edited = true;
+        } else if (choice == "12") {
             save();
             edited = false;
-        }
-        else if (choice == "12") {
+        } else if (choice == "13") {
             if (edited) {
                 cout << "Do you want to save before exiting? (y/n): ";
                 char c; cin >> c;
@@ -239,7 +261,6 @@ int main() {
         } else {
             cout << "Invalid choice! Try again.\n";
         }
-
     }
     return 0;
 }
