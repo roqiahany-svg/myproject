@@ -10,6 +10,7 @@
 
 
 
+
 #include <iostream>
 #include "Image_Class.h"
 using namespace std;
@@ -345,7 +346,7 @@ int main() {
         cout << "{12} Merge Images\n";
         cout << "{13} Detect Image Edges\n";
         cout << "{14}  addFrame\n";
-        cout << "{15}  BlurFilter\n";
+        cout<<"{15}  BlurFilter\n";
         cout << "{16} Save Image\n";
         cout << "{17} Exit\n";
         cout << "Enter your choice: ";
