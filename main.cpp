@@ -1,7 +1,7 @@
-//CS213, Assignment 1-part 2 (12 filters + a menu)
+//CS213, Assignment 1-part 2 (12 filters+1 bouns  + a menu)
 // 1 name: Roqia Hany , Id:20240193, filters done ( Grayscale Conversion, Darken and lighten,Darken and Lighten Image,Detect Image Edges)
 // 2 name: Ziad Sherif , Id:20240213, filters done (Black and White, Flip Image horizontaly and verticaly,Crop Images,Resizing Images)
-// 3 name: Amira Ahmed , Id: 20240746, filters done ( Invert Image , Rotate Image, Add Frame , Blur Images)
+// 3 name: Amira Ahmed , Id: 20240746, filters done ( Invert Image , Rotate Image, Add Frame , Blur Images, purple(bonus))
 // section number (all B)
 // we all did the menu together
 // Link to the shared document :
@@ -23,9 +23,13 @@ void Black_White(Image& img) {
             for (int k = 0; k < 3; ++k) {
                 avg += img(i, j, k);
             }
-            avg /= 3;
-            for (int k = 0; k < 3; ++k) {
-                img(i, j, k) = avg;
+            avg = avg / 3;
+            if (avg > 127) {
+                for (int k = 0; k < 3; ++k)
+                    img(i, j, k) = 255;
+            } else {
+                for (int k = 0; k < 3; ++k)
+                    img(i, j, k) = 0;
             }
         }
     }
@@ -297,6 +301,23 @@ void BlurFilter(Image& image, int kernelSize) {
         }
     }
 }
+void Purple_Filter(Image& img) {
+    for (int i = 0; i < img.height; i++) {
+        for (int j = 0; j < img.width; j++) {
+            unsigned char& R = img(i, j, 0);
+            unsigned char& G = img(i, j, 1);
+            unsigned char& B = img(i, j, 2);
+
+            int newR = min(255, int(R * 1.8));
+            int newG = int(G * 0.4);
+            int newB = min(255, int(B * 1.8));
+
+            R = newR;
+            G = newG;
+            B = newB;
+        }
+    }
+}
 void load(Image& img) {
     while (true) {
         try {
@@ -347,8 +368,9 @@ int main() {
         cout << "{13} Detect Image Edges\n";
         cout << "{14}  addFrame\n";
         cout<<"{15}  BlurFilter\n";
-        cout << "{16} Save Image\n";
-        cout << "{17} Exit\n";
+        cout<<"{16}  Purple_Filter\n";
+        cout << "{17} Save Image\n";
+        cout << "{18} Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -478,10 +500,14 @@ int main() {
             edited= true;
         }
         else if (choice == "16") {
+            Purple_Filter(image);
+            edited= true;
+        }
+        else if (choice == "17") {
             save();
             edited = false;
         }
-        else if (choice == "17") {
+        else if (choice == "18") {
             if (edited) {
                 cout << "Do you want to save before exiting? (y/n): ";
                 char c; cin >> c;
