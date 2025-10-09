@@ -297,6 +297,23 @@ void BlurFilter(Image& image, int kernelSize) {
         }
     }
 }
+void Purple_Filter(Image& img) {
+    for (int i = 0; i < img.height; i++) {
+        for (int j = 0; j < img.width; j++) {
+            unsigned char& R = img(i, j, 0);
+            unsigned char& G = img(i, j, 1);
+            unsigned char& B = img(i, j, 2);
+
+            int newR = min(255, int(R * 1.8));
+            int newG = int(G * 0.4);
+            int newB = min(255, int(B * 1.8));
+
+            R = newR;
+            G = newG;
+            B = newB;
+        }
+    }
+}
 void load(Image& img) {
     while (true) {
         try {
@@ -347,8 +364,9 @@ int main() {
         cout << "{13} Detect Image Edges\n";
         cout << "{14}  addFrame\n";
         cout<<"{15}  BlurFilter\n";
-        cout << "{16} Save Image\n";
-        cout << "{17} Exit\n";
+        cout<<"{16}  Purple_Filter\n";
+        cout << "{17} Save Image\n";
+        cout << "{18} Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -478,10 +496,14 @@ int main() {
             edited= true;
         }
         else if (choice == "16") {
+            Purple_Filter(image);
+            edited= true;
+        }
+        else if (choice == "17") {
             save();
             edited = false;
         }
-        else if (choice == "17") {
+        else if (choice == "18") {
             if (edited) {
                 cout << "Do you want to save before exiting? (y/n): ";
                 char c; cin >> c;
