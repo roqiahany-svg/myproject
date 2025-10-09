@@ -230,6 +230,60 @@ void detect_image_edges(Image& img) {
 
     img = newimage;
 }
+void addFrame(Image& img, int thickness, int thin_frame,
+              unsigned char R, unsigned char G, unsigned char B,
+              unsigned char R1, unsigned char G1, unsigned char B1,
+              bool add_thick, bool add_thin) {
+
+    int Height = img.height;
+    int Width  = img.width;
+
+    for (int i = 0; i < Width; i++) {
+        for (int j = 0; j < Height; j++) {
+
+            if (add_thick && (i < thickness || i >= Width - thickness ||
+                              j < thickness || j >= Height - thickness)) {
+                img(i, j, 0) = R;
+                img(i, j, 1) = G;
+                img(i, j, 2) = B;
+                              }
+
+            else if (add_thin && (i < thickness + thin_frame || i >= Width - (thickness + thin_frame) ||
+                                  j < thickness + thin_frame || j >= Height - (thickness + thin_frame))) {
+                img(i, j, 0) = R1;
+                img(i, j, 1) = G1;
+                img(i, j, 2) = B1;
+                                  }
+        }
+    }
+}
+void BlurFilter(Image& image, int kernelSize) {
+    for (int j = 0; j < image.height; ++j) {
+        for (int i = 0; i < image.width; ++i) {
+            float totalRed = 0, totalGreen = 0, totalBlue = 0;
+            for (int ky = -kernelSize / 2; ky <= kernelSize / 2; ++ky) {
+                for (int kx = -kernelSize / 2; kx <= kernelSize / 2; ++kx) {
+                    int pixelX = i + kx;
+                    int pixelY = j + ky;
+                    if (pixelX >= 0 && pixelX < image.width && pixelY >= 0 && pixelY < image.height) {
+                        totalRed += image(pixelX, pixelY, 0);
+                        totalGreen += image(pixelX, pixelY, 1);
+                        totalBlue += image(pixelX, pixelY, 2);
+                    }
+                }
+            }
+
+            int numPixels = kernelSize * kernelSize;
+            totalRed /= numPixels;
+            totalGreen /= numPixels;
+            totalBlue /= numPixels;
+
+            image(i, j, 0) = static_cast<unsigned char>(totalRed);
+            image(i, j, 1) = static_cast<unsigned char>(totalGreen);
+            image(i, j, 2) = static_cast<unsigned char>(totalBlue);
+        }
+    }
+}
 void load(Image& img) {
     while (true) {
         try {
@@ -276,10 +330,12 @@ int main() {
         cout << "{9} flip Image horizontally\n";
         cout << "{10} crop the Image\n";
         cout << "{11} Resize the Image\n";
-        cout << "{12} Merge Images\n"
+        cout << "{12} Merge Images\n";
         cout << "{13} Detect Image Edges\n";
-        cout << "{14} Save Image\n";           
-        cout << "{15} Exit\n";
+        cout << "{14}  addFrame\n";
+        cout<<"{15}  BlurFilter\n";
+        cout << "{16} Save Image\n";
+        cout << "{17} Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -338,10 +394,81 @@ int main() {
         } else if (choice == "13") {
             detect_image_edges(image);
             edited = true;
-        } else if (choice == "14") {
+        }
+        else if (choice == "14") {
+            int thickness = 25;
+            int thin_frame = 15;
+            unsigned char blackR = 0, blackG = 0, blackB = 0;
+            unsigned char grayR = 128, grayG = 128, grayB = 128;
+            unsigned char thickR = 0, thickG = 0, thickB = 0;
+            unsigned char thinR = 0, thinG = 0, thinB = 0;
+            bool add_thick = false, add_thin = false;
+            int choice;
+            cout << "Choose frame option:\n";
+            cout << "1. Thick frame only\n";
+            cout << "2. Thin frame only\n";
+            cout << "3. Both frames\n";
+            cout << "Enter your choice (1–3): ";
+            cin >> choice;
+            if (choice == 1) add_thick = true;
+            else if (choice == 2) add_thin = true;
+            else if (choice == 3) { add_thick = true; add_thin = true; }
+            else {
+                cout << "Invalid choice. Exiting.\n";
+                return 0;
+            }if (add_thick) {
+                int color_choice;
+                cout << "\nChoose color for THICK frame:\n";
+                cout << "1. Black\n";
+                cout << "2. Gray\n";
+                cout << "Enter your choice (1 or 2): ";
+                cin >> color_choice;
+                if (color_choice == 1)
+                    thickR = blackR, thickG = blackG, thickB = blackB;
+                else if (color_choice == 2)
+                    thickR = grayR, thickG = grayG, thickB = grayB;
+                else {
+                    cout << "Invalid color choice. Defaulting to black.\n";
+                    thickR = blackR; thickG = blackG; thickB = blackB;
+                }
+            }
+
+
+            if (add_thin) {
+                int color_choice;
+                cout << "\nChoose color for THIN frame:\n";
+                cout << "1. Black\n";
+                cout << "2. Gray\n";
+                cout << "Enter your choice (1 or 2): ";
+                cin >> color_choice;
+
+                if (color_choice == 1)
+                    thinR = blackR, thinG = blackG, thinB = blackB;
+                else if (color_choice == 2)
+                    thinR = grayR, thinG = grayG, thinB = grayB;
+                else {
+                    cout << "Invalid color choice. Defaulting to black.\n";
+                    thinR = blackR; thinG = blackG; thinB = blackB;
+                }
+            }
+
+            addFrame(image, thickness, thin_frame,
+                     thickR, thickG, thickB,
+                     thinR, thinG, thinB,
+                     add_thick, add_thin);
+        }
+        else if (choice == "15") {
+            int i = 4;
+            while (i--) {
+                BlurFilter(image, 25);
+            }
+            edited= true;
+        }
+        else if (choice == "16") {
             save();
             edited = false;
-        } else if (choice == "15") {
+        }
+        else if (choice == "17") {
             if (edited) {
                 cout << "Do you want to save before exiting? (y/n): ";
                 char c; cin >> c;
@@ -352,6 +479,7 @@ int main() {
         } else {
             cout << "Invalid choice! Try again.\n";
         }
+
     }
     return 0;
 }
