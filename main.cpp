@@ -1,3 +1,16 @@
+//CS213, Assignment 1-part 2 (12 filters + a menu)
+// 1 name: Roqia Hany , Id:20240193, filters done ( Grayscale Conversion, Darken and lighten,Darken and Lighten Image,Detect Image Edges)
+// 2 name: Ziad Sherif , Id:20240213, filters done (Black and White, Flip Image horizontaly and verticaly,Crop Images,Resizing Images)
+// 3 name: Amira Ahmed , Id: 20240746, filters done ( Invert Image , Rotate Image, Add Frame , Blur Images)
+// section number (all B)
+// we all did the menu together
+// Link to the shared document :
+// https://docs.google.com/document/d/10idr_XskaVv4Ajz76OZyX7DV-efFsfxKYLfWjbXNQpE/edit?usp=sharing
+
+
+
+
+
 #include <iostream>
 #include "Image_Class.h"
 using namespace std;
