@@ -6,7 +6,8 @@
 // we all did the menu together
 // Link to the shared document :
 // https://docs.google.com/document/d/10idr_XskaVv4Ajz76OZyX7DV-efFsfxKYLfWjbXNQpE/edit?usp=sharing
-
+// link to the demo video :
+// https://drive.google.com/file/d/1pSQ_k2ZNOHTrTtQfVbN2wlxSean4K8xy/view?usp=sharing
 
 
 
