@@ -169,40 +169,14 @@ void resize(Image& image) {
     }
     image = resizedImage;
 }
-Image mergeImages(Image img1,Image img2){
-    int finalWidth=max(img1.width,img2.width);
-    int finalHeight=max(img1.height,img2.height);
-    if (img1.width!=finalWidth||img1.height!=finalHeight){
-        Image resized(finalWidth,finalHeight);
-        for(int i=0;i<finalWidth;i++){
-            for (int j=0;j<finalHeight;j++){
-                int origX=i*img1.width/finalWidth;
-                int origY=j*img1.height/finalHeight;
-                for (int k=0;k<3;k++) {
-                    resized(i,j,k)=img1(origX,origY,k);
-                }
-            }
-        }
-        img1 = resized;
-    }
-    if (img2.width != finalWidth||img2.height!=finalHeight){
-        Image resized(finalWidth,finalHeight);
-        for(int i=0;i<finalWidth;i++){
-            for (int j=0;j<finalHeight;j++){
-                int origX=i*img2.width/finalWidth;
-                int origY=j*img2.height/finalHeight;
-                for(int k=0;k<3;k++){
-                    resized(i,j,k)=img2(origX,origY,k);
-                }
-            }
-        }
-        img2=resized;
-    }
-    Image merged(finalWidth,finalHeight);
-    for(int i=0;i<finalWidth;i++){
-        for (int j=0;j<finalHeight;j++){
-            for (int k=0;k<3;k++){
-                merged(i,j,k)=(img1(i, j, k) + img2(i, j, k)) / 2;
+Image mergeImages(Image img1, Image img2) {
+    int finalWidth = min(img1.width, img2.width);
+    int finalHeight = min(img1.height, img2.height);
+    Image merged(finalWidth, finalHeight);
+    for (int i = 0; i < finalWidth; i++) {
+        for (int j = 0; j < finalHeight; j++) {
+            for (int k = 0; k < 3; k++) {
+                merged(i, j, k) = (img1(i, j, k) + img2(i, j, k)) / 2;
             }
         }
     }
